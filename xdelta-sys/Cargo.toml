@@ -1,0 +1,21 @@
+[package]
+name = "xdelta"
+version = "0.1.0"
+authors = ["Dmitry Starostin <incrop@gmail.com>"]
+build = "build.rs"
+license = "GPL-2.0"
+repository = "https://github.com/incrop/xdelta-rs"
+description = """
+Bindings to the xdelta3.c library.
+"""
+
+[lib]
+name = "xdelta_sys"
+path = "lib.rs"
+
+[dependencies]
+libc = "0.2"
+
+[build-dependencies]
+gcc = "0.3"
+libc = "0.2"
