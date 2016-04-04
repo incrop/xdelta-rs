@@ -13,9 +13,5 @@ Bindings to the xdelta3.c library.
 name = "xdelta_sys"
 path = "lib.rs"
 
-[dependencies]
-libc = "0.2"
-
 [build-dependencies]
 gcc = "0.3"
-libc = "0.2"

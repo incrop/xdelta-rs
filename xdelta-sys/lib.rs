@@ -18,16 +18,14 @@
 
 #![allow(bad_style)]
 
-extern crate libc;
-
 use std::os::raw;
 
-pub type xoff_t = raw::c_ulong;
-pub type usize_t = raw::c_ulong;
+pub type xoff_t = u64;
+pub type usize_t = u64;
 
 pub type xd3_alloc_func = unsafe extern "C" fn(
     opaque: *mut raw::c_void,
-    items: libc::size_t,
+    items: usize,
     size: usize_t)
     -> *mut raw::c_void;
 pub type xd3_free_func = unsafe extern "C" fn(
@@ -113,7 +111,7 @@ pub struct xd3_config {
     pub alloc: *mut xd3_alloc_func,
     pub freef: *mut xd3_free_func,
     pub opaque: *mut raw::c_void,
-    pub flags: libc::uint32_t,
+    pub flags: u32,
     pub sec_data: xd3_sec_cfg,
     pub sec_inst: xd3_sec_cfg,
     pub sec_addr: xd3_sec_cfg,
@@ -129,7 +127,7 @@ pub struct xd3_source {
     pub max_winsize: xoff_t,
     curblkno: xoff_t,
     onblk: usize_t,
-    curblk: *const libc::uint8_t,
+    curblk: *const u8,
     srclen: usize_t,
     srcbase: xoff_t,
     shiftby: usize_t,
@@ -144,10 +142,10 @@ pub struct xd3_source {
 
 #[repr(C)]
 pub struct xd3_stream {
-    next_in: *const libc::uint8_t,
+    next_in: *const u8,
     avail_in: usize_t,
     total_in: xoff_t,
-    pub next_out: *mut libc::uint8_t,
+    pub next_out: *mut u8,
     pub avail_out: usize_t,
     space_out: usize_t,
     current_window: xoff_t,
@@ -163,7 +161,7 @@ pub struct xd3_stream {
     alloc: *mut xd3_alloc_func,
     free: *mut xd3_free_func,
     opaque: *mut raw::c_void,
-    flags: libc::uint32_t,
+    flags: u32,
     sec_data: xd3_sec_cfg,
     sec_inst: xd3_sec_cfg,
     sec_addr: xd3_sec_cfg,
@@ -193,54 +191,54 @@ pub struct xd3_stream {
     match_fwd: usize_t,
     match_maxfwd: usize_t,
     maxsrcaddr: xoff_t,
-    buf_in: *mut libc::uint8_t,
+    buf_in: *mut u8,
     buf_avail: usize_t,
-    buf_leftover: *const libc::uint8_t,
+    buf_leftover: *const u8,
     buf_leftavail: usize_t,
     enc_current: *mut xd3_output,
     enc_free: *mut xd3_output,
     enc_heads: [*mut xd3_output; 4usize],
     enc_tails: [*mut xd3_output; 4usize],
-    recode_adler32: libc::uint32_t,
+    recode_adler32: u32,
     iopt_used: xd3_rlist,
     iopt_free: xd3_rlist,
     iout: *mut xd3_rinst,
     iopt_alloc: *mut xd3_iopt_buflist,
-    enc_appheader: *const libc::uint8_t,
+    enc_appheader: *const u8,
     enc_appheadsz: usize_t,
     dec_state: xd3_decode_state,
     dec_hdr_ind: usize_t,
     dec_win_ind: usize_t,
     dec_del_ind: usize_t,
-    dec_magic: [libc::uint8_t; 4usize],
+    dec_magic: [u8; 4usize],
     dec_magicbytes: usize_t,
     dec_secondid: usize_t,
     dec_codetblsz: usize_t,
-    dec_codetbl: *mut libc::uint8_t,
+    dec_codetbl: *mut u8,
     dec_codetblbytes: usize_t,
     dec_appheadsz: usize_t,
-    dec_appheader: *mut libc::uint8_t,
+    dec_appheader: *mut u8,
     dec_appheadbytes: usize_t,
     dec_cksumbytes: usize_t,
-    dec_cksum: [libc::uint8_t; 4usize],
-    dec_adler32: libc::uint32_t,
+    dec_cksum: [u8; 4usize],
+    dec_adler32: u32,
     dec_cpylen: usize_t,
     dec_cpyoff: xoff_t,
     dec_enclen: usize_t,
     dec_tgtlen: usize_t,
-    dec_64part: libc::uint64_t,
+    dec_64part: u64,
     dec_winstart: xoff_t,
     dec_window_count: xoff_t,
     dec_winbytes: usize_t,
     dec_hdrsize: usize_t,
-    dec_tgtaddrbase: *const libc::uint8_t,
-    dec_cpyaddrbase: *const libc::uint8_t,
+    dec_tgtaddrbase: *const u8,
+    dec_cpyaddrbase: *const u8,
     dec_position: usize_t,
     dec_maxpos: usize_t,
     dec_current1: xd3_hinst,
     dec_current2: xd3_hinst,
-    dec_buffer: *mut libc::uint8_t,
-    dec_lastwin: *mut libc::uint8_t,
+    dec_buffer: *mut u8,
+    dec_lastwin: *mut u8,
     dec_lastlen: usize_t,
     dec_laststart: xoff_t,
     dec_lastspace: usize_t,
@@ -278,47 +276,47 @@ pub struct xd3_addr_cache {
 
 #[repr(C)]
 pub struct xd3_dinst {
-    type1: libc::uint8_t,
-    size1: libc::uint8_t,
-    type2: libc::uint8_t,
-    size2: libc::uint8_t,
+    type1: u8,
+    size1: u8,
+    type2: u8,
+    size2: u8,
 }
 
 
 extern "C" {
     pub fn xd3_encode_memory(
-        input: *const libc::uint8_t,
+        input: *const u8,
         input_size: usize_t,
-        source: *const libc::uint8_t,
+        source: *const u8,
         source_size: usize_t,
-        output_buffer: *mut libc::uint8_t,
+        output_buffer: *mut u8,
         output_size: *mut usize_t,
         avail_output: usize_t,
         flags: raw::c_int)
         -> raw::c_int;
     pub fn xd3_decode_memory(
-        input: *const libc::uint8_t,
+        input: *const u8,
         input_size: usize_t,
-        source: *const libc::uint8_t,
+        source: *const u8,
         source_size: usize_t,
-        output_buf: *mut libc::uint8_t,
+        output_buf: *mut u8,
         output_size: *mut usize_t,
         avail_output: usize_t,
         flags: raw::c_int)
         -> raw::c_int;
     pub fn xd3_encode_stream(
         stream: *mut xd3_stream,
-        input: *const libc::uint8_t,
+        input: *const u8,
         input_size: usize_t,
-        output: *mut libc::uint8_t,
+        output: *mut u8,
         output_size: *mut usize_t,
         avail_output: usize_t)
         -> raw::c_int;
     pub fn xd3_decode_stream(
         stream: *mut xd3_stream,
-        input: *const libc::uint8_t,
+        input: *const u8,
         input_size: usize_t,
-        output: *mut libc::uint8_t,
+        output: *mut u8,
         output_size: *mut usize_t,
         avail_size: usize_t)
         -> raw::c_int;
@@ -334,10 +332,10 @@ extern "C" {
         source: *mut xd3_source,
         source_size: xoff_t)
         -> raw::c_int;
-    pub fn xd3_set_appheader(stream: *mut xd3_stream, data: *const libc::uint8_t, size: usize_t);
+    pub fn xd3_set_appheader(stream: *mut xd3_stream, data: *const u8, size: usize_t);
     pub fn xd3_get_appheader(
         stream: *mut xd3_stream,
-        data: *mut *mut libc::uint8_t,
+        data: *mut *mut u8,
         size: *mut usize_t)
         -> raw::c_int;
     pub fn xd3_encode_init_partial(stream: *mut xd3_stream) -> raw::c_int;
@@ -436,7 +434,7 @@ struct xd3_slist {
 }
 #[repr(C)]
 struct xd3_output {
-    base: *mut libc::uint8_t,
+    base: *mut u8,
     next: usize_t,
     avail: usize_t,
     next_page: *mut xd3_output,
@@ -448,10 +446,10 @@ struct xd3_rlist {
 }
 #[repr(C)]
 struct xd3_rinst {
-    _type: libc::uint8_t,
-    xtra: libc::uint8_t,
-    code1: libc::uint8_t,
-    code2: libc::uint8_t,
+    _type: u8,
+    xtra: u8,
+    code1: u8,
+    code2: u8,
     pos: usize_t,
     size: usize_t,
     addr: xoff_t,
@@ -464,25 +462,25 @@ struct xd3_iopt_buflist {
 }
 #[repr(C)]
 struct xd3_hinst {
-    _type: libc::uint8_t,
+    _type: u8,
     size: usize_t,
     addr: usize_t,
 }
 #[repr(C)]
 struct xd3_desect {
-    buf: *const libc::uint8_t,
-    buf_max: *const libc::uint8_t,
+    buf: *const u8,
+    buf_max: *const u8,
     size: usize_t,
     pos: usize_t,
-    copied1: *mut libc::uint8_t,
+    copied1: *mut u8,
     alloc1: usize_t,
-    copied2: *mut libc::uint8_t,
+    copied2: *mut u8,
     alloc2: usize_t,
 }
 #[repr(C)]
 struct xd3_whole_state {
     addslen: usize_t,
-    adds: *mut libc::uint8_t,
+    adds: *mut u8,
     adds_alloc: usize_t,
     instlen: usize_t,
     inst: *mut xd3_winst,
@@ -494,8 +492,8 @@ struct xd3_whole_state {
 }
 #[repr(C)]
 struct xd3_winst {
-    _type: libc::uint8_t,
-    mode: libc::uint8_t,
+    _type: u8,
+    mode: u8,
     size: usize_t,
     addr: xoff_t,
     position: xoff_t,
@@ -504,7 +502,7 @@ struct xd3_winst {
 struct xd3_wininfo {
     offset: xoff_t,
     length: usize_t,
-    adler32: libc::uint32_t,
+    adler32: u32,
 }
 
 
@@ -513,8 +511,6 @@ struct xd3_wininfo {
 
 #[cfg(test)]
 mod tests {
-    extern crate libc;
-
     use super::*;
     use std::mem::size_of_val;
 
