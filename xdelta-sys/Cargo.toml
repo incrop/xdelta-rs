@@ -3,7 +3,7 @@ name = "xdelta"
 version = "0.1.0"
 authors = ["Dmitry Starostin <incrop@gmail.com>"]
 build = "build.rs"
-license = "GPL-2.0"
+license = "MIT/Apache-2.0"
 repository = "https://github.com/incrop/xdelta-rs"
 description = """
 Bindings to the xdelta3.c library.
